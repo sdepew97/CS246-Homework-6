@@ -6,6 +6,8 @@
 #ifndef DLIST_NODE_H_
 #define DLIST_NODE_H_
 
+#include <stdlib.h>
+
 typedef struct dlist_node {
   int data;  // the data stored in this node
   struct dlist_node* next; // pointer to next node

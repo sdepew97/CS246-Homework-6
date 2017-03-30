@@ -1,6 +1,6 @@
 /* dlist.h
 
-   Declarations for an abstract sequence type backed by a singly linked list.
+   Declarations for an abstract sequence type backed by a doubly linked list.
 */
 
 #ifndef DLIST_H_
