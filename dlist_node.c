@@ -1,6 +1,38 @@
-#include "dlist.h"
+#include "dlist_node.h"
+#include <stdio.h>
 
 int main(void){
+	/*
+	dlist_node *head = new_node(10, NULL, NULL); 
+	insert_after(head, 12); 
+	insert_before(head, 212); 
+	head = head ->prev; 
+	insert_after(head->next, 22); 
+	insert_after(head->next->next->prev, 33);
+	 
+	head = head->next; 
+	delete_node(head->prev); 
+	
+	printf("%d\n", head->data); 
+	printf("%d\n", nth_node(head, 1)->data); 
+	printf("%d\n", head->next->next->data);
+	printf("%d\n", head->next->next->next->data);
+	printf("%d\n", length(head));
+	//printf("%d\n", head->next->next->next->next->data);
+	*/
+	
+	int a[3] = {12, 4, 18}; 
+	int b[3] = {1}; 
+	dlist_node *head = from_array(3, a);
+	printf("%d\n", head->data); 
+	printf("%d\n", nth_node(head, 1)->data); 
+	printf("%d\n", nth_node(head, 2)->data); 
+	
+	to_array(head, 3, b); 
+	for(int i=0; i<3; i++){
+		printf("%d\n", b[i]); 
+	}
+	free_dlist(head); 
 	return 0; 
 }
 
@@ -49,17 +81,24 @@ void insert_before(dlist_node* n, int data){
 	}
 }
 
-// delete the given node
+//Questions: WHAT IF THE NODE IS THE HEAD, what should n point to after? Or, am I responsible for figuring this out later?
+
+// delete the given node   
 // Precondition: Supplied node is not NULL.
 void delete_node(dlist_node* n){
 	dlist_node *prev = n->prev; //node before n
 	dlist_node *next = n->next; //node after n
+	dlist_node *to_delete = n; 
 	
 	//connect if next and prev are not null
 	if(next)
 		next->prev = prev; 
+		
 	if(prev)
-		prev->next = next;  
+		prev->next = next; 
+	
+	//free n
+	free(to_delete);   
 }
 
 // return a pointer to the nth node in the list. If n is
@@ -97,7 +136,7 @@ dlist_node* from_array(int n, int a[n]){
 	dlist_node *return_val = NULL; //the pointer that will track the return value node
 	
 	for(int i=n-1; i>=0; i--){
-		return_val = new_node(a[i], NULL, return_val); 
+		return_val = new_node(a[i], return_val, NULL); 
 		
 		if(return_val->next){ //check that the node is not the first node, so there is no next node to set a prev to!
 			return_val->next->prev = return_val; 
@@ -114,7 +153,7 @@ dlist_node* from_array(int n, int a[n]){
 int to_array(dlist_node* head, int n, int a[n]){
 	int num_elements = 0; 
 	for(int i=0; i<n; i++){
-		a[n] = head->data
+		a[i] = head->data; 
 		head = head->next;
 		num_elements++;  	
 	}
@@ -128,4 +167,5 @@ int length(dlist_node* head){
 		head = head->next; 
 		length++; 
 	}
+	return length; 
 }
