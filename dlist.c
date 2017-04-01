@@ -1,4 +1,5 @@
-
+#include "dlist.h"
+#include "dlist_node.h"
 
 typedef struct dlist_record {
   dlist_node *head; //pointer to the first node in the dlist
@@ -16,6 +17,8 @@ dlist dlist_new(){
 	d->size = 0; 
 	d->head = NULL;
 	d->tail = NULL;  
+	
+	return d; 
 }
 
 // returns the number of elements in the dlist. Runs in constant time.
@@ -107,16 +110,17 @@ void dlist_insert(dlist l, int n, int elt){
 		for(int i=0; i<n-1; i++){
 			target = target->next; 
 		}
-		insert_after(target, elt){
+		insert_after(target, elt); 
 	}
 	
-	else{ //n>l->size/2
+	//n>l->size/2
+	else{ 
 		dlist_node *target = l->tail; 
 		
 		for(int i=0; i<l->size-n; i++){
 			target = target->prev; 
 		}
-		insert_after(target, elt){
+		insert_after(target, elt); 
 	}
 
 }
@@ -140,7 +144,7 @@ int dlist_get(dlist l, int n){
 	else{ //n>l->size/2
 	
 	}
-
+return 0; 
 }
 
 // sets the nth element of the dlist to a new value.
@@ -149,16 +153,16 @@ int dlist_get(dlist l, int n){
 // postcondition: returns the old value of the element that was set
 int dlist_set(dlist l, int n, int new_elt){
 
-
+	return 0; 
 }
 
 // removes the nth element of the dlist.
 // Traverses from whichever side of the dlist is closer.
 // precondition: the list has at least (n+1) elements
 // postcondition: returns the removed element
-int dlist_remove(dlist l, int n);
+int dlist_remove(dlist l, int n){
+	return 0; 
+}
 
 // frees an dlist. Takes O(size(l)) steps.
 void dlist_free(dlist l);
-
-#endif

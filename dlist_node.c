@@ -1,41 +1,4 @@
 #include "dlist_node.h"
-#include <stdio.h>
-
-int main(void){
-	/*
-	dlist_node *head = new_node(10, NULL, NULL); 
-	insert_after(head, 12); 
-	insert_before(head, 212); 
-	head = head ->prev; 
-	insert_after(head->next, 22); 
-	insert_after(head->next->next->prev, 33);
-	 
-	head = head->next; 
-	delete_node(head->prev); 
-	
-	printf("%d\n", head->data); 
-	printf("%d\n", nth_node(head, 1)->data); 
-	printf("%d\n", head->next->next->data);
-	printf("%d\n", head->next->next->next->data);
-	printf("%d\n", length(head));
-	//printf("%d\n", head->next->next->next->next->data);
-	*/
-	
-	int a[3] = {12, 4, 18}; 
-	int b[3] = {1}; 
-	dlist_node *head = from_array(3, a);
-	printf("%d\n", head->data); 
-	printf("%d\n", nth_node(head, 1)->data); 
-	printf("%d\n", nth_node(head, 2)->data); 
-	
-	to_array(head, 3, b); 
-	for(int i=0; i<3; i++){
-		printf("%d\n", b[i]); 
-	}
-	free_dlist(head); 
-	return 0; 
-}
-
 
 // create (i.e., malloc) a new node
 dlist_node* new_node(int data, dlist_node* next, dlist_node* prev){
