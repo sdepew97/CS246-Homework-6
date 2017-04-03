@@ -29,9 +29,15 @@ int dlist_size(dlist l){
 // appends a new element to the beginning of the dlist. Runs in constant time.
 void dlist_push(dlist l, int elt){
 	l->head = new_node(elt, l->head, NULL); 
-	if(l->tail){ //if the tail doesn't point to anything, which makes this the first element of the list, then tail should change 
+	
+	if(l->head->next != NULL){ //if this element is not the first element/has a node after it
+		l->head->next->prev = l->head; 
+	}
+	
+	if(l->tail == NULL){ //if the tail doesn't point to anything, which makes this the first element of the list, then tail should change 
 		l->tail = l->head; 
 	}
+	
 	l->size++; 
 }
 
@@ -45,7 +51,7 @@ int dlist_pop(dlist l){
 			l->tail = NULL; //the list is going to be empty 
 	} 
 	
-	l->head = old_head->next; 
+	l->head = old_head->next; //will be NULL iff head only node 
 	l->size--; 
 	
 	free(old_head); //frees the memory for the old head value, since this was originally malloced 
@@ -63,9 +69,14 @@ int dlist_peek(dlist l){
 void dlist_push_end(dlist l, int elt){
 	l->tail = new_node(elt, NULL, l->tail); 
 	
-	if(l->head){ //if the head doesn't currently point to anything, which makes this the first element of the list, then head should change 
+	if(l->tail->prev != NULL){ //the tail was updated and so the node pointed to needs to link to the one before it 
+		l->tail->prev->next = l->tail; 
+	}
+	
+	if(l->head == NULL){ //if the head doesn't currently point to anything, which makes this the first element of the list, then head should change 
 		l->head = l->tail; 
 	}
+	
 	l->size++;
 }
 
@@ -110,17 +121,19 @@ void dlist_insert(dlist l, int n, int elt){
 		for(int i=0; i<n-1; i++){
 			target = target->next; 
 		}
-		insert_after(target, elt); 
+		insert_after(target, elt);
+		l->size++;  
 	}
 	
 	//n>l->size/2
 	else{ 
 		dlist_node *target = l->tail; 
 		
-		for(int i=0; i<l->size-n; i++){
+		for(int i=0; i<l->size-n-1; i++){
 			target = target->prev; 
 		}
 		insert_after(target, elt); 
+		l->size++; 
 	}
 
 }
@@ -130,21 +143,33 @@ void dlist_insert(dlist l, int n, int elt){
 // precondition: the list has at least (n+1) elements
 int dlist_get(dlist l, int n){
 	if(n==0){
-		dlist_pop(l); 
+		return dlist_peek(l); 
 	}
 	
 	else if(n+1==l->size){
-		dlist_pop_end(l); 
+		return dlist_peek_end(l); 
 	}
 	
-	else if(n<=l->size/2){
+	else if(n<=l->size/2-1){
+		dlist_node *head = l->head; 
 		
+		for(int i=0; i<n; i++){
+			head = head->next; 
+		}
+		return head->data;  	
 	}
 	
 	else{ //n>l->size/2
-	
+		dlist_node *tail = l->tail; 
+		
+		for(int i=0; i<l->size-n-1; i++){
+			tail = tail->prev; 
+		}
+		return tail->data; 
 	}
-return 0; 
+	
+	//default return value
+	return -1; 
 }
 
 // sets the nth element of the dlist to a new value.
@@ -152,8 +177,50 @@ return 0;
 // precondition: the list has at least (n+1) elements
 // postcondition: returns the old value of the element that was set
 int dlist_set(dlist l, int n, int new_elt){
-
-	return 0; 
+	if(n==0){
+		int return_val = dlist_peek(l);
+		
+		l->head->data = new_elt; 
+		
+		return return_val; 
+	}
+	
+	else if(n+1==l->size){
+		int return_val = dlist_peek_end(l);
+		
+		l->tail->data = new_elt; 
+		
+		return return_val;  
+	}
+	
+	else if(n<=l->size/2-1){
+		dlist_node *head = l->head; 
+		
+		for(int i=0; i<n; i++){
+			head = head->next; 
+		}
+		int return_val = head->data;  
+		
+		head->data = new_elt; 
+		
+		return return_val; 	
+	}
+	
+	else{ //n>l->size/2
+		dlist_node *tail = l->tail; 
+		
+		for(int i=0; i<l->size-n-1; i++){
+			tail = tail->prev; 
+		}
+		int return_val = tail->data;
+		
+		tail->data = new_elt; 
+		
+		return return_val;  
+	}
+	
+	//default return value
+	return -1; 
 }
 
 // removes the nth element of the dlist.
@@ -161,8 +228,72 @@ int dlist_set(dlist l, int n, int new_elt){
 // precondition: the list has at least (n+1) elements
 // postcondition: returns the removed element
 int dlist_remove(dlist l, int n){
-	return 0; 
+	if(n==0){
+		int return_val = dlist_peek(l);
+		dlist_node *head = l->head; 
+		
+		if(head->prev!=NULL){
+			free(head->prev); 
+			head->prev = NULL;
+		}
+		 		
+		l->head = head; 
+		l->size--;
+		 
+		return return_val; 
+	}
+	
+	else if(n+1==l->size){
+		int return_val = dlist_peek_end(l);
+		
+		dlist_node *tail = l->tail->prev;
+		
+		if(tail->next!=NULL){
+			free(tail->next); 
+			tail->next = NULL; 
+		}
+		
+		l->tail = tail; 
+		l->size--; 
+		
+		return return_val;  
+	}
+	
+	else if(n<=l->size/2-1){
+		dlist_node *head = l->head; 
+		
+		for(int i=0; i<n; i++){
+			head = head->next; 
+		}
+		
+		int return_val = head->data;  
+		
+		delete_node(head);  
+		l->size--;
+		
+		return return_val; 	
+	}
+	
+	else{ //n>l->size/2
+		dlist_node *tail = l->tail; 
+		
+		for(int i=0; i<l->size-n-1; i++){
+			tail = tail->prev; 
+		}
+		int return_val = tail->data;
+		
+		delete_node(tail);  
+		l->size--;
+		
+		return return_val;  
+	}
+	
+	//default return value
+	return -1; 
 }
 
 // frees an dlist. Takes O(size(l)) steps.
-void dlist_free(dlist l);
+void dlist_free(dlist l){
+	//free_dlist(l->head); 
+	free(l); 
+}

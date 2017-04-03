@@ -4,68 +4,123 @@
 */
 
 #include <check.h>
-
 #include "dlist.h"
 
 /*
+// retrieves the nth element of the dlist.
+// Traverses from whichever side of the dlist is closer.
+// precondition: the list has at least (n+1) elements
+int dlist_get(dlist l, int n);
+
+// sets the nth element of the dlist to a new value.
+// Traverses from whichever side of the dlist is closer.
+// precondition: the list has at least (n+1) elements
+// postcondition: returns the old value of the element that was set
+int dlist_set(dlist l, int n, int new_elt);
+
+// removes the nth element of the dlist.
+// Traverses from whichever side of the dlist is closer.
+// precondition: the list has at least (n+1) elements
+// postcondition: returns the removed element
+int dlist_remove(dlist l, int n);
+
+// frees an dlist. Takes O(size(l)) steps.
+void dlist_free(dlist l);
+*/
+
 START_TEST(test_push_pop)
 {
-  llist l = llist_new();
+  dlist d = dlist_new();
   
-  ck_assert_int_eq(llist_size(l), 0);
+  ck_assert_int_eq(dlist_size(d), 0);
 
-  llist_push(l, 3);
-  llist_push(l, 4);
+  dlist_push(d, 3);
+  
+  ck_assert_int_eq(dlist_peek_end(d), 3); 
+  ck_assert_int_eq(dlist_peek(d), 3);
+  
+  dlist_push(d, 4);
+  ck_assert_int_eq(dlist_pop(d), 4);
 
-  ck_assert_int_eq(llist_pop(l), 4);
+  dlist_push(d, 5);
+  ck_assert_int_eq(dlist_peek(d), 5);
+  ck_assert_int_eq(dlist_size(d), 2);
+  
+  dlist_push(d, 6);
+  dlist_push_end(d, 8);
+  ck_assert_int_eq(dlist_peek_end(d), 8);  
+  dlist_push_end(d, 12); 
+  dlist_push_end(d, 7); 
 
-  llist_push(l, 5);
-  ck_assert_int_eq(llist_peek(l), 5);
-  llist_push(l, 6);
-
-  ck_assert_int_eq(llist_pop(l), 6);
-  ck_assert_int_eq(llist_size(l), 2);
-  ck_assert_int_eq(llist_pop(l), 5);
-  ck_assert_int_eq(llist_peek(l), 3);
-  ck_assert_int_eq(llist_pop(l), 3);
-  ck_assert_int_eq(llist_size(l), 0);
-
-  llist_free(l);
+  ck_assert_int_eq(dlist_size(d), 6);
+  ck_assert_int_eq(dlist_pop(d), 6);
+  ck_assert_int_eq(dlist_pop_end(d), 7);
+  ck_assert_int_eq(dlist_pop_end(d), 12);
+  ck_assert_int_eq(dlist_size(d), 3);
+  ck_assert_int_eq(dlist_pop(d), 5);
+  ck_assert_int_eq(dlist_peek(d), 3);
+  ck_assert_int_eq(dlist_peek_end(d), 8);
+  ck_assert_int_eq(dlist_pop(d), 3);
+  ck_assert_int_eq(dlist_size(d), 1);
+  ck_assert_int_eq(dlist_peek(d), 8);
+  ck_assert_int_eq(dlist_peek_end(d), 8);
+  ck_assert_int_eq(dlist_pop(d), 8);
+  ck_assert_int_eq(dlist_size(d), 0);
+  
+  dlist_free(d); //need help debugging this!!
 }
 END_TEST
 
 START_TEST(test_interior)
 {
-  llist l = llist_new();
+  dlist d = dlist_new();
 
-  llist_insert(l, 0, 3);
-  llist_insert(l, 0, 2);
-  llist_insert(l, 0, 1);
-  llist_insert(l, 1, 8);
-  llist_insert(l, 4, 10);
-  llist_insert(l, 1, 6);
+  dlist_insert(d, 0, 3);
+  dlist_insert(d, 0, 2);
+  dlist_insert(d, 0, 1);
+  dlist_insert(d, 1, 8);
+  dlist_insert(d, 4, 10);
+  dlist_insert(d, 1, 6);
 
   // should be [1, 6, 8, 2, 3, 10]
-  ck_assert_int_eq(llist_size(l), 6);
-  ck_assert_int_eq(llist_get(l, 2), 8);
-  ck_assert_int_eq(llist_get(l, 5), 10);
-  ck_assert_int_eq(llist_get(l, 0), 1);
+  ck_assert_int_eq(dlist_size(d), 6);
+  ck_assert_int_eq(dlist_get(d, 0), 1);
+  ck_assert_int_eq(dlist_get(d, 1), 6);
+  ck_assert_int_eq(dlist_get(d, 2), 8);
+  ck_assert_int_eq(dlist_get(d, 3), 2);
+  ck_assert_int_eq(dlist_get(d, 4), 3);
+  ck_assert_int_eq(dlist_get(d, 5), 10);
 
-  ck_assert_int_eq(llist_set(l, 2, 42), 8);
-  ck_assert_int_eq(llist_set(l, 5, 88), 10);
-  ck_assert_int_eq(llist_set(l, 0, 33), 1);
-
-  ck_assert_int_eq(llist_remove(l, 1), 6);
-  ck_assert_int_eq(llist_remove(l, 0), 33);
-  ck_assert_int_eq(llist_remove(l, 3), 88);
-
-  ck_assert_int_eq(llist_size(l), 3);
-  ck_assert_int_eq(llist_peek(l), 42);
-
-  llist_free(l);
+  ck_assert_int_eq(dlist_set(d, 2, 42), 8);
+  ck_assert_int_eq(dlist_set(d, 5, 88), 10);
+  ck_assert_int_eq(dlist_set(d, 0, 33), 1);
+  
+  // should be [33, 6, 42, 2, 3, 88]
+  ck_assert_int_eq(dlist_remove(d, 1), 6);
+  ck_assert_int_eq(dlist_size(d), 5);
+  
+  // should be [33, 42, 2, 3, 88]
+  ck_assert_int_eq(dlist_remove(d, 0), 33);
+  ck_assert_int_eq(dlist_size(d), 4);
+  
+  // should be [42, 2, 3, 88]
+  ck_assert_int_eq(dlist_remove(d, 2), 3);
+  ck_assert_int_eq(dlist_size(d), 3);
+  
+  // should be [42, 2, 88]
+  ck_assert_int_eq(dlist_remove(d, 0), 42);
+  ck_assert_int_eq(dlist_size(d), 2);
+  
+  // should be [2, 88]
+  ck_assert_int_eq(dlist_peek(d), 2);
+  
+  ck_assert_int_eq(dlist_remove(d, 0), 2);
+  ck_assert_int_eq(dlist_remove(d, 0), 88);
+  
+  dlist_free(d);
 }
 END_TEST
-*/
+
 
 // the main() function for unit testing is fairly prescribed.
 // Just copy & paste, but make sure to update the test names!
@@ -79,8 +134,8 @@ int main()
   TCase* tc = tcase_create("llist");
 
   // Each TCase can have many individual testing functions.
-  //tcase_add_test(tc, test_push_pop);
-  //tcase_add_test(tc, test_interior);
+  tcase_add_test(tc, test_push_pop);
+  tcase_add_test(tc, test_interior);
 
   // Having set up the TCase, add it to the suite:
   suite_add_tcase(s, tc);

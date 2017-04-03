@@ -86,7 +86,7 @@ dlist_node* nth_node_prev(dlist_node* tail, int n){
 // free an entire linked list. The list might be empty.
 void free_dlist(dlist_node* head){
 	dlist_node *current = head; 
-	while(current){
+	while(current!=NULL){
 		current = head->next;
 		free(head); 
 		head = current;  

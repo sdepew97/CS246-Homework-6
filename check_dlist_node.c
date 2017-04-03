@@ -4,37 +4,7 @@
 */
 
 #include <check.h>
-
 #include "dlist_node.h"
-
-/*
-// return a pointer to the nth node in the list. If n is
-// the length of the list, this returns NULL, but does not error.
-// Precondition: the list has at least n nodes
-dlist_node* nth_node(dlist_node* head, int n);
-
-// return a pointer to the nth previous node in the list. (That is,
-// this uses `prev` pointers, not `next` pointers.) If n is
-// the length of the list, this returns NULL, but does not error.
-// Precondition: the list has at least n nodes
-dlist_node* nth_node_prev(dlist_node* tail, int n);
-
-// free an entire linked list. The list might be empty.
-void free_dlist(dlist_node* head);
-
-// create a linked list that stores the same elements as the given array.
-// Postcondition: returns the head element
-dlist_node* from_array(int n, int a[n]);
-
-// fill in the given array with the elements from the list.
-// Returns the number of elements filled in.
-// Postcondition: if n is returned, the first n elements of the array
-// have been copied from the linked list
-int to_array(dlist_node* head, int n, int a[n]);
-
-// gets the length of a list
-int length(dlist_node* head);
-*/
 
 START_TEST(test_new_node)
 {
@@ -48,8 +18,8 @@ START_TEST(test_new_node)
 }
 END_TEST
 
-START_TEST(test_insert_after)
-{
+START_TEST(test_insert_after){
+
 	dlist_node *head = new_node(10, NULL, NULL); 
 	insert_after(head, 22); 
 	
@@ -63,8 +33,8 @@ START_TEST(test_insert_after)
 }
 END_TEST
 
-START_TEST(test_insert_before)
-{
+START_TEST(test_insert_before){
+
 	dlist_node *head = new_node(10, NULL, NULL); 
 	insert_before(head, 8); 
 	
@@ -78,8 +48,8 @@ START_TEST(test_insert_before)
 }
 END_TEST
 
-START_TEST(test_delete_node)
-{
+START_TEST(test_delete_node){
+
 	dlist_node *head = new_node(10, NULL, NULL); 
 	insert_after(head, 13); 
 	insert_after(head->next, 22); 
@@ -90,6 +60,93 @@ START_TEST(test_delete_node)
 	
 	free(head->next); 
 	free(head); 
+}
+END_TEST
+
+START_TEST(test_free_dlist){
+	dlist_node *head = NULL;  
+	free_dlist(head); 
+}
+END_TEST
+
+START_TEST(test_nth_node){
+
+	dlist_node *head = new_node(10, NULL, NULL); 
+	insert_after(head, 13); 
+	insert_after(head->next, 22);
+	insert_after(head->next->next, 56);  
+	
+	ck_assert_int_eq(nth_node(head, 0)->data, 10);
+	ck_assert_int_eq(nth_node(head, 1)->data, 13);
+	ck_assert_int_eq(nth_node(head, 2)->data, 22);
+	ck_assert_int_eq(nth_node(head, 3)->data, 56);
+	
+	free(head->next->next->next); //cleaning up after myself
+	free(head->next->next);
+	free(head->next); 
+	free(head); 
+}
+END_TEST
+
+START_TEST(test_nth_node_prev){
+
+	dlist_node *head = new_node(10, NULL, NULL); 
+	insert_after(head, 13); 
+	insert_after(head->next, 22);
+	insert_after(head->next->next, 56);  
+	dlist_node *tail = head->next->next->next; 
+	
+	ck_assert_int_eq(nth_node_prev(tail, 0)->data, 56);
+	ck_assert_int_eq(nth_node_prev(tail, 1)->data, 22);
+	ck_assert_int_eq(nth_node_prev(tail, 2)->data, 13);
+	ck_assert_int_eq(nth_node_prev(tail, 3)->data, 10);
+	
+	free(head->next->next->next); //cleaning up after myself
+	free(head->next->next);
+	free(head->next); 
+	free(head); 
+}
+END_TEST
+
+START_TEST(test_from_array){
+	int n = 10; 
+	int array[10] = {10, 9, 8, 7, 6, 5, 4, 3, 2, 1}; 
+	
+	dlist_node *head = from_array(n, array); 
+	
+	for(int i=0; i<n; i++){
+		ck_assert_int_eq(nth_node(head, i)->data, array[i]);
+	}	
+	
+	free_dlist(head); 
+}
+END_TEST
+
+int to_array(dlist_node* head, int n, int a[n]);
+
+START_TEST(test_to_array){
+	int n = 10; 
+	int array[10] = {}; 
+	int array_2[10] = {10, 9, 8, 7, 6, 5, 4, 3, 2, 1}; 
+	dlist_node *head = from_array(n, array_2); 
+	int size = to_array(head, n, array); 
+	
+	for(int i=0; i<size; i++){
+		ck_assert_int_eq(array[i], array_2[i]);
+	}	
+	
+	free_dlist(head); 
+}
+END_TEST
+
+START_TEST(test_length){ 
+	int n = 10; 
+	int array[10] = {10, 9, 8, 7, 6, 5, 4, 3, 2, 1}; 
+	dlist_node *head = from_array(n, array);  
+	
+	ck_assert_int_eq(length(head), n); 	
+	
+	free_dlist(head); 
 }
 END_TEST
 
@@ -109,7 +166,13 @@ int main()
   tcase_add_test(tc, test_insert_after);
   tcase_add_test(tc, test_insert_before);
   tcase_add_test(tc, test_delete_node);
-
+  tcase_add_test(tc, test_nth_node);
+  tcase_add_test(tc, test_nth_node_prev);
+  tcase_add_test(tc, test_from_array);
+  tcase_add_test(tc, test_to_array);
+  tcase_add_test(tc, test_length); 
+  tcase_add_test(tc, test_free_dlist);
+  
   // Having set up the TCase, add it to the suite:
   suite_add_tcase(s, tc);
 
