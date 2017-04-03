@@ -232,26 +232,27 @@ int dlist_remove(dlist l, int n){
 		int return_val = dlist_peek(l);
 		dlist_node *head = l->head; 
 		
-		if(head->prev!=NULL){
+		if(head->next!=NULL){
+			head = head->next;
 			free(head->prev); 
 			head->prev = NULL;
+			l->head = head; 
 		}
-		 		
-		l->head = head; 
+		
+		else{
+			free(head); 
+			l->head = NULL; 
+		}
+		
 		l->size--;
 		 
 		return return_val; 
 	}
 	
-	else if(n+1==l->size){
+	else if(n+1==l->size){ //will never be the only node, since the if statement, above, would catch the time when head and tail point to the same element
 		int return_val = dlist_peek_end(l);
 		
 		dlist_node *tail = l->tail->prev;
-		
-		if(tail->next!=NULL){
-			free(tail->next); 
-			tail->next = NULL; 
-		}
 		
 		l->tail = tail; 
 		l->size--; 

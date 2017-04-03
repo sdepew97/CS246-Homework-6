@@ -12,7 +12,7 @@ check_dlist_node.o: check_dlist_node.c dlist_node.h
 	gcc -c check_dlist_node.c
 
 check_dlist.o: check_dlist.c dlist.h dlist_node.h
-	gcc -c check_dlist.c
+	gcc -c -g check_dlist.c
 
 dlist.o: dlist.c dlist.h dlist_node.h
 	gcc -c dlist.c
