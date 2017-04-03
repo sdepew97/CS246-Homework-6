@@ -44,8 +44,6 @@ void insert_before(dlist_node* n, int data){
 	}
 }
 
-//Questions: WHAT IF THE NODE IS THE HEAD, what should n point to after? Or, am I responsible for figuring this out later?
-
 // delete the given node   
 // Precondition: Supplied node is not NULL.
 void delete_node(dlist_node* n){
@@ -85,11 +83,12 @@ dlist_node* nth_node_prev(dlist_node* tail, int n){
 
 // free an entire linked list. The list might be empty.
 void free_dlist(dlist_node* head){
-	dlist_node *current = head; 
-	while(current!=NULL){
-		current = head->next;
-		free(head); 
-		head = current;  
+	dlist_node *current = head; //second pointer
+	
+	while(current){ //based off of free_llist(); 
+		head = current; 
+		current = current->next;  
+		free(head);   
 	}
 }
 

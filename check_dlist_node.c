@@ -28,8 +28,7 @@ START_TEST(test_insert_after){
 //	ck_assert_int_eq(head->next->next, 0);
 //	ck_assert_int_eq(head->prev, 0);
 	
-	free(head->next); //clean up after myself
-	free(head); 
+	free_dlist(head); //clean up after myself
 }
 END_TEST
 
@@ -37,14 +36,12 @@ START_TEST(test_insert_before){
 
 	dlist_node *head = new_node(10, NULL, NULL); 
 	insert_before(head, 8); 
+	head = head->prev; 
 	
-	ck_assert_int_eq(head->prev->data, 8);
-	ck_assert_int_eq(head->data, 10);
-//	ck_assert_int_eq(head->prev->prev, 0);
-//	ck_assert_int_eq(head->next, 0);
+	ck_assert_int_eq(head->data, 8);
+	ck_assert_int_eq(head->next->data, 10);
 	
-	free(head->prev); //clean up after myself
-	free(head); 
+	free_dlist(head); 
 }
 END_TEST
 

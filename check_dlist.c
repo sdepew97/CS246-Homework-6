@@ -6,28 +6,6 @@
 #include <check.h>
 #include "dlist.h"
 
-/*
-// retrieves the nth element of the dlist.
-// Traverses from whichever side of the dlist is closer.
-// precondition: the list has at least (n+1) elements
-int dlist_get(dlist l, int n);
-
-// sets the nth element of the dlist to a new value.
-// Traverses from whichever side of the dlist is closer.
-// precondition: the list has at least (n+1) elements
-// postcondition: returns the old value of the element that was set
-int dlist_set(dlist l, int n, int new_elt);
-
-// removes the nth element of the dlist.
-// Traverses from whichever side of the dlist is closer.
-// precondition: the list has at least (n+1) elements
-// postcondition: returns the removed element
-int dlist_remove(dlist l, int n);
-
-// frees an dlist. Takes O(size(l)) steps.
-void dlist_free(dlist l);
-*/
-
 START_TEST(test_push_pop)
 {
   dlist d = dlist_new();
@@ -40,6 +18,7 @@ START_TEST(test_push_pop)
   ck_assert_int_eq(dlist_peek(d), 3);
   
   dlist_push(d, 4);
+  
   ck_assert_int_eq(dlist_pop(d), 4);
 
   dlist_push(d, 5);
@@ -51,7 +30,7 @@ START_TEST(test_push_pop)
   ck_assert_int_eq(dlist_peek_end(d), 8);  
   dlist_push_end(d, 12); 
   dlist_push_end(d, 7); 
-
+  
   ck_assert_int_eq(dlist_size(d), 6);
   ck_assert_int_eq(dlist_pop(d), 6);
   ck_assert_int_eq(dlist_pop_end(d), 7);
@@ -67,7 +46,7 @@ START_TEST(test_push_pop)
   ck_assert_int_eq(dlist_pop(d), 8);
   ck_assert_int_eq(dlist_size(d), 0);
   
-  dlist_free(d); //need help debugging this!!
+  dlist_free(d);
 }
 END_TEST
 
@@ -131,7 +110,7 @@ int main()
   Suite* s = suite_create("main");
 
   // Inside a suite are potentially many `TCase`s.
-  TCase* tc = tcase_create("llist");
+  TCase* tc = tcase_create("dlist");
 
   // Each TCase can have many individual testing functions.
   tcase_add_test(tc, test_push_pop);

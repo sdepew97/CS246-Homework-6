@@ -52,6 +52,11 @@ int dlist_pop(dlist l){
 	} 
 	
 	l->head = old_head->next; //will be NULL iff head only node 
+	
+	if(l->head){ //if the head is not NULL
+		l->head->prev = NULL; //nothing to point to for prev, anymore
+	}
+	
 	l->size--; 
 	
 	free(old_head); //frees the memory for the old head value, since this was originally malloced 
@@ -90,8 +95,13 @@ int dlist_pop_end(dlist l){
 		l->head = NULL; 
 	}
 	
-	l->tail = old_tail->prev; 
-	free(old_tail); 
+	l->tail = old_tail->prev; //reset tail
+	
+	if(l->tail){ //if the tail is not NULL
+		l->tail->next = NULL; //set tail's next pointer to NULL
+	}
+	
+	free(old_tail); //free the old tail
 	l->size--; 
 	
 	return return_val; 
@@ -253,7 +263,7 @@ int dlist_remove(dlist l, int n){
 		int return_val = dlist_peek_end(l);
 		
 		dlist_node *tail = l->tail->prev;
-		
+		free(tail->next); 
 		l->tail = tail; 
 		l->size--; 
 		
@@ -295,6 +305,6 @@ int dlist_remove(dlist l, int n){
 
 // frees an dlist. Takes O(size(l)) steps.
 void dlist_free(dlist l){
-	//free_dlist(l->head); 
+	free_dlist(l->head); 
 	free(l); 
 }
