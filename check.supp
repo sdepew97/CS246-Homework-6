@@ -1,0 +1,94 @@
+# This file instructs valgrind to ignore errors created by the `check` library.
+# Pass the command-line flag --suppressions=check.supp to have valgrind ignore
+# these errors.
+
+{
+   Ignore-fork
+   Memcheck:Leak
+   match-leak-kinds: all
+   ...
+   fun:fork
+   ...
+}
+
+{
+   Ignore-fwrite
+   Memcheck:Leak
+   match-leak-kinds: all
+   ...
+   fun:fwrite
+   ...
+}
+
+{
+   Ignore-suite-create
+   Memcheck:Leak
+   match-leak-kinds: all
+   ...
+   fun:suite_create
+   ...
+}
+
+{
+   Ignore-tcase-create
+   Memcheck:Leak
+   match-leak-kinds: all
+   ...
+   fun:tcase_create
+   ...
+}
+
+{
+   Ignore-srunner-create
+   Memcheck:Leak
+   match-leak-kinds: all
+   ...
+   fun:srunner_create
+   ...
+}
+
+{
+   Ignore-logging
+   Memcheck:Leak
+   match-leak-kinds: all
+   ...
+   fun:srunner_init_logging
+   ...
+}
+
+{
+   Ignore-add-test
+   Memcheck:Leak
+   match-leak-kinds: all
+   ...
+   fun:_tcase_add_test
+   ...
+}
+
+{
+   Ignore-check-list-add-end
+   Memcheck:Leak
+   match-leak-kinds: all
+   ...
+   fun:check_list_add_end
+   ...
+}
+
+{
+   Ignore-run-strdup
+   Memcheck:Leak
+   match-leak-kinds: all
+   ...
+   fun:strdup
+   fun:srunner_run
+   ...
+}
+
+{
+   Ignore-receive-test-result
+   Memcheck:Leak
+   match-leak-kinds: all
+   ...
+   fun:receive_test_result
+   ...
+}
