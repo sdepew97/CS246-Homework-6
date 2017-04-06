@@ -166,25 +166,17 @@ void dlist_insert(dlist l, int n, int elt){
 	
 	//if the element is in the first half of the list, then the element's insertion location is closer to the head than the tail
 	else if(n<=(l->size)/2){
-		dlist_node *target = l->head; 
-		for(int i=0; i<n-1; i++){
-			target = target->next; 
-		}
+		dlist_node *target = nth_node(l->head, n-1); 
 		insert_after(target, elt);
 		l->size++;  
 	}
 	
 	//else the element is in the last half of the list, then the element's insertion location is closer to the tail than the head
 	else{ 
-		dlist_node *target = l->tail; 
-		
-		for(int i=0; i<l->size-n-1; i++){
-			target = target->prev; 
-		}
+		dlist_node *target = nth_node_prev(l->tail, (l->size)-n-1); 
 		insert_after(target, elt); 
 		l->size++; 
 	}
-
 }
 
 // retrieves the nth element of the dlist.
@@ -203,22 +195,12 @@ int dlist_get(dlist l, int n){
 	
 	//if the element is in the first half of the list, then the head is closer 
 	else if(n<=((l->size)/2)-1){
-		dlist_node *head = l->head; 
-		
-		for(int i=0; i<n; i++){
-			head = head->next; 
-		}
-		return head->data;  	
+		return nth_node(l->head,n)->data;  	
 	}
 	
 	//if the element is in the second half of the list, then the tail is closer 
 	else{
-		dlist_node *tail = l->tail; 
-		
-		for(int i=0; i<l->size-n-1; i++){
-			tail = tail->prev; 
-		}
-		return tail->data; 
+		return nth_node_prev(l->tail, (l->size)-n-1)->data;  
 	}
 	
 	//default return value
@@ -249,11 +231,7 @@ int dlist_set(dlist l, int n, int new_elt){
 	
 	//closest to head if in first half of list
 	else if(n<=((l->size)/2)-1){
-		dlist_node *head = l->head; 
-		
-		for(int i=0; i<n; i++){
-			head = head->next; 
-		}
+		dlist_node *head = nth_node(l->head, n); 
 		int return_val = head->data;  
 		
 		head->data = new_elt; 
@@ -263,11 +241,7 @@ int dlist_set(dlist l, int n, int new_elt){
 	
 	//closest to tail if in the second half of the list
 	else{ 
-		dlist_node *tail = l->tail; 
-		
-		for(int i=0; i<l->size-n-1; i++){
-			tail = tail->prev; 
-		}
+		dlist_node *tail = nth_node_prev(l->tail, (l->size)-n-1); 
 		int return_val = tail->data;
 		
 		tail->data = new_elt; 
@@ -286,53 +260,17 @@ int dlist_set(dlist l, int n, int new_elt){
 int dlist_remove(dlist l, int n){
 	//if n=0, then remove the element at the head of the list
 	if(n==0){
-		/*
-		int return_val = dlist_peek(l);
-		dlist_node *head = l->head; 
-		
-		if(head->next!=NULL){
-			head = head->next;
-			free(head->prev); 
-			head->prev = NULL;
-			l->head = head; 
-		}
-		
-		else{
-			free(head); 
-			l->head = NULL; 
-		}
-		
-		l->size--;
-		 
-		return return_val;
-		*/
 		return dlist_pop(l);  
 	}
 	
 	//if n+1 = the size of the linked list, then delete the tail. It is important to note that this node will never be the only node, since the if statement, above, would catch the time when head and tail point to the same element
 	else if(n+1==l->size){ 
-		/*
-		int return_val = dlist_peek_end(l);
-		
-		dlist_node *tail = l->tail->prev;
-		free(tail->next);
-		tail->next = NULL;  
-		l->tail = tail; 
-		l->size--; 
-		
-		return return_val;
-		*/
 		return dlist_pop_end(l);   
 	}
 	
 	//if you are deleting from the first half of the list, then the head is closest 
-	else if(n<=l->size/2-1){
-		dlist_node *head = l->head; 
-		
-		for(int i=0; i<n; i++){
-			head = head->next; 
-		}
-		
+	else if(n<=((l->size)/2)-1){
+		dlist_node *head = nth_node(l->head, n); 
 		int return_val = head->data;  
 		
 		delete_node(head);  
@@ -343,11 +281,7 @@ int dlist_remove(dlist l, int n){
 	
 	//if you are deleting from the second half of the list, then the tail is closest 
 	else{
-		dlist_node *tail = l->tail; 
-		
-		for(int i=0; i<l->size-n-1; i++){
-			tail = tail->prev; 
-		}
+		dlist_node *tail = nth_node_prev(l->tail, (l->size)-n-1); 
 		int return_val = tail->data;
 		
 		delete_node(tail);  
