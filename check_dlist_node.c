@@ -4,17 +4,47 @@
 */
 
 #include <check.h>
+#include <stdio.h>
 #include "dlist_node.h"
 
-START_TEST(test_new_node)
-{
+START_TEST(test_new_node){
+
   dlist_node *head = new_node(10, NULL, NULL); 
   
   ck_assert_int_eq(head->data, 10); //if the method worked, then 10 should be in head->data
-//  ck_assert_int_eq(head->next, NULL); 
-//  ck_assert_int_eq(head->prev, NULL); 
+    
+  free_dlist(head); //clean up after myself 
+}
+END_TEST
+
+START_TEST(test_linking){
+
+  dlist_node *head = new_node(1, NULL, NULL); 
+  dlist_node *tail = head; 
+  int arr[3] = {2, 3, 4}; 
   
-  free(head); //clean up after myself 
+  for(int i=0; i<3; i++){
+  	insert_after(tail, arr[i]); 
+  	tail = tail->next;  
+  }
+  
+  dlist_node *temp = head; 
+  int j = 0; 
+  while(temp){
+  	ck_assert_int_eq(temp->data, j+1); 
+  	temp = temp->next; 
+  	j++; 
+  }
+  
+  temp = tail; 
+  j = 0; 
+  while(temp){
+  	ck_assert_int_eq(temp->data, 4-j); 
+  	temp = temp->prev; 
+  	j++; 
+  }
+  
+  free_dlist(head); //clean up after myself 
 }
 END_TEST
 
@@ -24,9 +54,6 @@ START_TEST(test_insert_after){
 	insert_after(head, 22); 
 	
 	ck_assert_int_eq(head->next->data, 22);
-//	ck_assert_int_eq(head->next->prev->data, 10);
-//	ck_assert_int_eq(head->next->next, 0);
-//	ck_assert_int_eq(head->prev, 0);
 	
 	free_dlist(head); //clean up after myself
 }
@@ -55,8 +82,7 @@ START_TEST(test_delete_node){
 	
 	ck_assert_int_eq(head->next->data, 22);
 	
-	free(head->next); 
-	free(head); 
+	free_dlist(head); 
 }
 END_TEST
 
@@ -78,10 +104,7 @@ START_TEST(test_nth_node){
 	ck_assert_int_eq(nth_node(head, 2)->data, 22);
 	ck_assert_int_eq(nth_node(head, 3)->data, 56);
 	
-	free(head->next->next->next); //cleaning up after myself
-	free(head->next->next);
-	free(head->next); 
-	free(head); 
+	free_dlist(head);  
 }
 END_TEST
 
@@ -98,10 +121,7 @@ START_TEST(test_nth_node_prev){
 	ck_assert_int_eq(nth_node_prev(tail, 2)->data, 13);
 	ck_assert_int_eq(nth_node_prev(tail, 3)->data, 10);
 	
-	free(head->next->next->next); //cleaning up after myself
-	free(head->next->next);
-	free(head->next); 
-	free(head); 
+	free_dlist(head);  
 }
 END_TEST
 
@@ -119,18 +139,25 @@ START_TEST(test_from_array){
 }
 END_TEST
 
-int to_array(dlist_node* head, int n, int a[n]);
-
 START_TEST(test_to_array){
 	int n = 10; 
 	int array[10] = {}; 
 	int array_2[10] = {10, 9, 8, 7, 6, 5, 4, 3, 2, 1}; 
 	dlist_node *head = from_array(n, array_2); 
 	int size = to_array(head, n, array); 
+	printf("%d\n", size); 
 	
 	for(int i=0; i<size; i++){
 		ck_assert_int_eq(array[i], array_2[i]);
-	}	
+	}
+	
+	delete_node(nth_node(head, size-1)); 
+	size = to_array(head, n, array); 
+	printf("%d\n", size); 
+	
+	for(int i=0; i<size; i++){
+		ck_assert_int_eq(array[i], array_2[i]);
+	}		
 	
 	free_dlist(head); 
 }
@@ -169,6 +196,7 @@ int main()
   tcase_add_test(tc, test_to_array);
   tcase_add_test(tc, test_length); 
   tcase_add_test(tc, test_free_dlist);
+  tcase_add_test(tc, test_linking); 
   
   // Having set up the TCase, add it to the suite:
   suite_add_tcase(s, tc);

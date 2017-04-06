@@ -4,10 +4,11 @@
 */
 
 #include <check.h>
+#include <stdio.h>
 #include "dlist.h"
 
-START_TEST(test_push_pop)
-{
+START_TEST(test_push_pop){
+
   dlist d = dlist_new();
   
   ck_assert_int_eq(dlist_size(d), 0);
@@ -50,8 +51,8 @@ START_TEST(test_push_pop)
 }
 END_TEST
 
-START_TEST(test_interior)
-{
+START_TEST(test_interior){
+
   dlist d = dlist_new();
 
   dlist_insert(d, 0, 3);
@@ -73,8 +74,20 @@ START_TEST(test_interior)
   ck_assert_int_eq(dlist_set(d, 2, 42), 8);
   ck_assert_int_eq(dlist_set(d, 5, 88), 10);
   ck_assert_int_eq(dlist_set(d, 0, 33), 1);
+  ck_assert_int_eq(dlist_set(d, 3, 2), 2);
   
   // should be [33, 6, 42, 2, 3, 88]
+  ck_assert_int_eq(dlist_get(d, 0), 33);
+  ck_assert_int_eq(dlist_get(d, 1), 6);
+  ck_assert_int_eq(dlist_get(d, 2), 42);
+  ck_assert_int_eq(dlist_get(d, 3), 2);
+  ck_assert_int_eq(dlist_get(d, 4), 3);
+  ck_assert_int_eq(dlist_get(d, 5), 88);
+  
+  ck_assert_int_eq(dlist_remove(d, 5), 88);
+  dlist_insert(d, 5, 88);
+  
+  //should be [33, 6, 42, 2, 3, 88]
   ck_assert_int_eq(dlist_remove(d, 1), 6);
   ck_assert_int_eq(dlist_size(d), 5);
   
@@ -96,6 +109,19 @@ START_TEST(test_interior)
   ck_assert_int_eq(dlist_remove(d, 0), 2);
   ck_assert_int_eq(dlist_remove(d, 0), 88);
   
+  
+  int arr[] = {1,2,3,4,5,6}; 
+	dlist l = dlist_new(); 
+	
+	for(int i=0; i<6; i++){
+		//dlist_push(l, arr[i]); 
+		//dlist_push_end(l, arr[i]);
+		dlist_insert(l, i, arr[i]);  
+	}
+	for(int i=0; i<6; i++){
+		ck_assert_int_eq(dlist_get(l,i), arr[i]); 
+	}
+  dlist_free(l); 
   dlist_free(d);
 }
 END_TEST
@@ -103,8 +129,8 @@ END_TEST
 
 // the main() function for unit testing is fairly prescribed.
 // Just copy & paste, but make sure to update the test names!
-int main()
-{
+int main(){
+
   // `check` allows for multiple test suites, but we'll always
   // just have one, called "main"
   Suite* s = suite_create("main");
